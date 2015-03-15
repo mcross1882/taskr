@@ -12,13 +12,13 @@ case class Task(id: String, events: Seq[Event], current_event: Int) {
 
 case class TaskProgress(task: Task) {
     val totalEvents = task.events.length
-    val currentEvent = task.currentEvent
+    val currentEvent = task.current_event
     val remainingEvents = totalEvents - currentEvent
     val progress =
         if (0 != totalEvents) currentEvent.toFloat / totalEvents.toFloat else 0
 
     def toMap() = {
-        val event = if (task.events.contains(currentEvent)) task.events(currentEvent) else null
+        val event = if (currentEvent < task.events.length) task.events(currentEvent) else null
 
         Map(
             "total_events" -> totalEvents,

@@ -27,7 +27,6 @@ class TaskServiceActorTest extends Specification with Specs2RouteTest with TaskS
 
     protected def createNewTask(): Task = {
         Post("/task") ~> endpoints ~> check {
-            println(responseAs[String])
             return fromJson[Task](responseAs[String])
         }
     }
