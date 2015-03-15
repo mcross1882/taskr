@@ -9,13 +9,10 @@ import com.owlike.genson.defaultGenson.{fromJson, toJson}
 class TaskServiceActorTest extends Specification with Specs2RouteTest with TaskService {
     def actorRefFactory = system
 
-    private var taskId: String = ""
-
     "TaskService" should {
         "return a new task for POST request to the /task endpoint" in {
             Post("/task") ~> endpoints ~> check {
                 val task = fromJson[JsonResponse[Task]](responseAs[String])
-                taskId = task.data.id
                 task.status must beEqualTo(200)
                 task.message must beEqualTo("Created new task")
                 task.data.id must be matching("""\w+-\w+-\w+-\w+-\w+""")

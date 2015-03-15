@@ -7,13 +7,19 @@ import akka.pattern.ask
 import akka.util.Timeout
 import scala.concurrent.duration._
 
-object Boot extends App {
+object Boot {
 
     implicit val system = ActorSystem("taskr")
 
-    val service = system.actorOf(Props[TaskServiceActor], "task-service")
-
     implicit val timeout = Timeout(5.seconds)
 
-    IO(Http) ? Http.Bind(service, interface = "localhost", port = 8080)
+    def main(args: Array[String]) {
+        if (args.length < 2) {
+            return println("taskr [host] [port]")
+        }
+
+        val service = system.actorOf(Props[TaskServiceActor], "task-service")
+
+        IO(Http) ? Http.Bind(service, interface = args(2), port = args(1).toInt)
+    }
 }

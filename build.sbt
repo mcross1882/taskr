@@ -22,4 +22,6 @@ libraryDependencies ++= {
   )
 }
 
+jarName in assembly := "taskr.jar"
+
 Revolver.settings
