@@ -60,7 +60,7 @@ Get the current progress of the task.
         "description": "1st event"
     },
     "current_event": 2,
-    "remainingEvents": 6,
+    "remaining_events": 6,
     "total_events": 8,
     "progress": 0.25
 }

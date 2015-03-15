@@ -23,7 +23,7 @@ case class TaskProgress(task: Task) {
         toJson(Map(
             "total_events" -> totalEvents,
             "current_event" -> currentEvent,
-            "remainingEvents" -> remainingEvents,
+            "remaining_events" -> remainingEvents,
             "progress" -> progress,
             "event" -> event
         ))
