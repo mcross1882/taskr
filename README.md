@@ -66,10 +66,10 @@ query parameters.
 ```json
 {
     "id": "c8c9cdc3-c1e1-4f83-b471-06bf49e13406",
-    "events": [
+    "events": {
         "name": "A new event",
         "description": "Something deep and technical"
-    ],
+    },
     "currentEvent": 0
 }
 ```
@@ -84,10 +84,10 @@ When executed this endpoint will increase the `currentEvent` property in the tas
 ```json
 {
     "id": "c8c9cdc3-c1e1-4f83-b471-06bf49e13406",
-    "events": [
+    "events": {
         "name": "A new event",
         "description": "Something deep and technical"
-    ],
+    },
     "currentEvent": 1
 }
 ```
