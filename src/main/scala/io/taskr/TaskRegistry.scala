@@ -28,18 +28,18 @@ final class TaskRegistry(client: RedisClient) {
     def newTaskEvent(taskId: String, name: String, description: String): Task = {
         val eventToAdd = Event(name, description)
         val task = findTask(taskId)
-        val updatedTask = Task(task.id, task.events ++ Seq(eventToAdd), task.currentEvent)
+        val updatedTask = Task(task.id, task.events ++ Seq(eventToAdd), task.current_event)
         client.set(taskId, toJson(updatedTask))
         updatedTask
     }
 
     def tickNextEvent(taskId: String): Task = {
         val task = findTask(taskId)
-        if (task.currentEvent >= task.events.length) {
+        if (task.current_event >= task.events.length) {
             return task
         }
 
-        val updatedTask = Task(task.id, task.events, task.currentEvent + 1)
+        val updatedTask = Task(task.id, task.events, task.current_event + 1)
         client.set(taskId, toJson(updatedTask))
         updatedTask
     }

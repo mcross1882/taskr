@@ -8,6 +8,14 @@ import spray.util.LoggingContext
 import com.redis.RedisClient
 import com.owlike.genson.defaultGenson.{fromJson, toJson}
 
+case class JsonResponse[T](status: Int, message: String, data: T) {
+    override def toString(): String = toJson(Map(
+        "status" -> status,
+        "message" -> message,
+        "data" -> data
+    ))
+}
+
 class TaskServiceActor extends Actor with TaskService {
     implicit def handler(implicit log: LoggingContext) = {
         ExceptionHandler {
@@ -15,7 +23,7 @@ class TaskServiceActor extends Actor with TaskService {
                 requestUri { uri =>
                     log.warning("Request to {} caught exception {}", uri, e.getMessage)
                     e.printStackTrace
-                    complete(s"""{"status":500,"message":"${e.getMessage}","stack_trace":${toJson(e.getStackTrace.take(10))}}""")
+                    complete(s"""{"status":500,"message":"${e.getMessage}","errors":${toJson(e.getStackTrace.take(10))}}""")
                 }
             }
         }
@@ -31,56 +39,60 @@ trait TaskService extends HttpService {
     private val registry = new TaskRegistry(new RedisClient("localhost", 6379))
 
     val endpoints =
-    path("task" / "new") {
-        put {
+    path("task") {
+        post {
             respondWithMediaType(`application/json`) {
                 complete {
                     val task = registry.newTask
-                    task.toString
+                    JsonResponse(200, s"Created new task", task).toString
                 }
             }
         }
     } ~
-    path("task" / Segment / "delete") { (id) =>
+    path("task" / Segment) { (id) =>
         delete {
             respondWithMediaType(`application/json`) {
                 complete {
                     if (registry.hasTask(id)) {
                         registry.deleteTask(id)
-                        s"""{"status":200,"message":"Successfully deleted task $id"}"""
+                        JsonResponse(200, s"Successfully deleted task $id", null).toString
                     } else {
-                        s"""{"status":404,"message":"Task $id does not exist"}"""
+                        JsonResponse(404, s"Task $id does not exist", null).toString
                     }
                 }
             }
-        }
-    } ~
-    path("task" / Segment / "progress") { (id) =>
+        } ~
         get {
             respondWithMediaType(`application/json`) {
                 complete {
-                    val task = registry.findTask(id)
-                    TaskProgress(task).toString
-                }
-            }
-        }
-    } ~
-    path("task" / Segment / "event" / "new") { (id) =>
-        put {
-            respondWithMediaType(`application/json`) {
-                parameters('name, 'description) { (name, description) =>
-                    complete {
-                        toJson(registry.newTaskEvent(id, name, description))
+                    if (!registry.hasTask(id)) {
+                        JsonResponse(404, s"Task $id does not exist", null).toString
+                    } else {
+                        val task = registry.findTask(id)
+                        JsonResponse(200, s"Found task", TaskProgress(task).toMap).toString
                     }
                 }
             }
         }
     } ~
-    path("task" / Segment / "event" / "tick") { (id) =>
+    path("task" / Segment / "event") { (id) =>
+        post {
+            respondWithMediaType(`application/json`) {
+                parameters('name, 'description) { (name, description) =>
+                    complete {
+                        val task = registry.newTaskEvent(id, name, description)
+                        JsonResponse(200, s"Added new event to task", task).toString
+                    }
+                }
+            }
+        }
+    } ~
+    path("task" / Segment / "tick") { (id) =>
         post {
             respondWithMediaType(`application/json`) {
                 complete {
-                    toJson(registry.tickNextEvent(id))
+                    val task = registry.tickNextEvent(id)
+                    JsonResponse(200, s"Moved to next event for task", task).toString
                 }
             }
         }
