@@ -75,7 +75,7 @@ trait TaskService extends HttpService {
             }
         }
     } ~
-    path("task" / Segment / "event" / "new") { (id) =>
+    path("task" / Segment / "event") { (id) =>
         post {
             respondWithMediaType(`application/json`) {
                 parameters('name, 'description) { (name, description) =>
@@ -87,7 +87,7 @@ trait TaskService extends HttpService {
             }
         }
     } ~
-    path("task" / Segment / "event" / "tick") { (id) =>
+    path("task" / Segment / "tick") { (id) =>
         post {
             respondWithMediaType(`application/json`) {
                 complete {

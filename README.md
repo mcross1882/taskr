@@ -37,7 +37,7 @@ Generate a new task for storing events. A task will live for 24 hours then it is
 ---
 
 ```
-DELETE /task/:id/delete
+DELETE /task/:id
 ```
 
 Delete a task. A json blob with a 404 message will be returned if the task id does not exist.
@@ -53,7 +53,7 @@ Delete a task. A json blob with a 404 message will be returned if the task id do
 ---
 
 ```
-GET /task/:id/progress
+GET /task/:id
 ```
 
 Get the current progress of the task.
@@ -78,7 +78,7 @@ Get the current progress of the task.
 ---
 
 ```
-POST /task/:id/event/new
+POST /task/:id/event
 
 Query Parameters
 name        - The name of the event
@@ -108,7 +108,7 @@ query parameters.
 ---
 
 ```
-POST /task/:id/event/tick
+POST /task/:id/tick
 ```
 
 Progress the task to its next event. If there are no new events the last event will be returned.
