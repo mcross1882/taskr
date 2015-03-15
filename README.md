@@ -4,6 +4,16 @@ taskr
 A simple API for tracking the progress of your events. Taskr decouples your event management
 so multiple resources can interact with it without duplicating code across servers.
 
+### How does it work?
+
+Lets assume we have the following
+    - `serverA` a backend server that processes jobs
+    - `serverB` a server that provides a web UI for users
+    
+`serverA` can create a `task` and then populate it with `events`. At the same time `serverB` can continuously 
+poll the current `task` progress. As `serverB` progresses through `events` updates will reflect immediately to
+any servers polling the progress.
+
 ### API Overview
 
 ```
@@ -104,5 +114,16 @@ When executed this endpoint will increase the `currentEvent` property in the tas
 {
     "status": 404,
     "message": "Task c8c9cdc3-c1e1-4f83-b471-06bf49e13406 does not exist"
+}
+```
+
+`500` Internal server error. This will be returned if a critical error occurs in the server. To improve debugging
+the first 10 lines of the stack trace will be provided as an array of objects in the response.
+
+```json
+{
+    "status": 500,
+    "message": "Something went really wrong",
+    "stack_trace": []
 }
 ```
