@@ -6,8 +6,8 @@ so multiple resources can interact with it without duplicating code across serve
 
 ### How does it work?
 
-Lets assume we have the following
-    - `serverA` a backend server that processes jobs
+Lets assume we have the following  
+    - `serverA` a backend server that processes jobs  
     - `serverB` a server that provides a web UI for users
     
 `serverA` can create a `task` and then populate it with `events`. At the same time `serverB` can continuously 
