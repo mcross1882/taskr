@@ -9,25 +9,19 @@ import com.owlike.genson.defaultGenson.{fromJson, toJson}
 class TaskServiceActorTest extends Specification with Specs2RouteTest with TaskService {
     def actorRefFactory = system
 
+    private var taskId: String = ""
+
     "TaskService" should {
         "return a new task for POST request to the /task endpoint" in {
             Post("/task") ~> endpoints ~> check {
-                responseAs[String] must be matching(""".*"id":"\w+-\w+-\w+-\w+-\w+".*""")
+                val task = fromJson[JsonResponse[Task]](responseAs[String])
+                taskId = task.data.id
+                task.status must beEqualTo(200)
+                task.message must beEqualTo("Created new task")
+                task.data.id must be matching("""\w+-\w+-\w+-\w+-\w+""")
+                task.data.events must beEmpty
+                task.data.current_event must beEqualTo(0)
             }
-        }
-
-        "delete an existing task with a DELETE request to /task/:id" in {
-            val task = createNewTask
-      
-            Delete(s"/task/${task.id}") ~> endpoints ~> check {
-                responseAs[String] must contain("Successfully deleted task ${task.id}")
-            }
-        }
-    }
-
-    protected def createNewTask(): Task = {
-        Post("/task") ~> endpoints ~> check {
-            return fromJson[Task](responseAs[String])
         }
     }
 }
