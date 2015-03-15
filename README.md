@@ -7,8 +7,8 @@ so multiple resources can interact with it without duplicating code across serve
 ### How does it work?
 
 Lets assume we have the following  
-    - `serverA` a backend server that processes jobs  
-    - `serverB` a server that provides a web UI for users
+- `serverA` a backend server that processes jobs  
+- `serverB` a server that provides a web UI for users
     
 `serverA` can create a `task` and then populate it with `events`. At the same time `serverB` can continuously 
 poll the current `task` progress. As `serverB` progresses through `events` updates will reflect immediately to
@@ -30,6 +30,8 @@ Generate a new task for storing events. A task will live for 24 hours then it is
 }
 ```
 
+---
+
 ```
 DELETE /task/:id/delete
 ```
@@ -42,6 +44,8 @@ Delete a task. A json blob with a 404 message will be returned if the task id do
     "message": "Successfully deleted task c8c9cdc3-c1e1-4f83-b471-06bf49e13406"
 }
 ```
+
+---
 
 ```
 GET /task/:id/progress
@@ -61,6 +65,8 @@ Get the current progress of the task.
     "progress": 0.25
 }
 ```
+
+---
 
 ```
 PUT /task/:id/event/new
@@ -85,6 +91,8 @@ query parameters.
     "currentEvent": 0
 }
 ```
+
+---
 
 ```
 POST /task/:id/event/tick
@@ -116,6 +124,8 @@ When executed this endpoint will increase the `currentEvent` property in the tas
     "message": "Task c8c9cdc3-c1e1-4f83-b471-06bf49e13406 does not exist"
 }
 ```
+
+---
 
 `500` Internal server error. This will be returned if a critical error occurs in the server. To improve debugging
 the first 10 lines of the stack trace will be provided as an array of objects in the response.
